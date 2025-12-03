@@ -59,5 +59,3 @@ This project is licensed under the [MIT License](LICENSE).
 
 *Simplify your email marketing with MailSense!*  
 ```  
-
-Se hai esigenze specifiche o vuoi aggiungere dettagli, fammi sapere!
