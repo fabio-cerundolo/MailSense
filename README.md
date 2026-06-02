@@ -1,155 +1,121 @@
 # MailSense
 
-**Make sense of your inbox.**  
-MailSense is an intelligent application for email analysis and management. Using natural language processing (NLP) techniques, it automatically categorizes messages, extracts insights, and provides analytical views of your email activity.
+MailSense è un'applicazione web per l'automazione intelligente della generazione e dell'invio di email, progettata per semplificare le comunicazioni aziendali. Sfrutta l'elaborazione del linguaggio naturale (NLP) per trasformare brevi contesti in email professionali, pronte per essere inviate in modo sicuro tramite un ambiente di test SMTP.
 
----
+## Panoramica
 
-## Overview
-
-MailSense addresses the challenge of information overload in professional inboxes by offering:
-
-- Automatic email classification by category and priority
-- Extraction of summaries and action items from messages
-- Analytics dashboard to monitor trends and volumes
-- Modern, fully responsive user interface
-- Modular architecture, easily extensible
-
----
+Il progetto risolve il problema della scrittura ripetitiva di email aziendali, offrendo:
+- Generazione istantanea di contenuti email professionali e contestualizzati tramite IA.
+- Anteprima in tempo reale nel browser prima dell'invio.
+- Consegna sicura e tracciabile tramite ambiente di test (Mailtrap), ideale per demo e sviluppo.
+- Interfaccia utente moderna, reattiva e focalizzata sulla produttività.
 
 ## Tech Stack
 
-| Component | Technology |
-|-----------|------------|
-| Frontend | React 18, TypeScript, TailwindCSS |
-| State Management | Zustand, React Query |
-| Backend | Node.js, Express |
-| NLP / AI | OpenAI API, Transformers.js |
-| Database | PostgreSQL |
-| Email Protocol | IMAP/SMTP (node-imap), Gmail API (OAuth 2.0) |
-| Tooling | Vite, ESLint, Prettier, Vitest |
+| Componente | Tecnologia |
+|------------|------------|
+| **Backend** | Python, Flask (Blueprints) |
+| **Intelligenza Artificiale** | Groq API (`llama-3.3-70b-versatile`) |
+| **Email Delivery** | Mailtrap (Sandbox SMTP) |
+| **Frontend** | HTML5, JavaScript (Fetch API), Tailwind CSS |
+| **Configurazione** | `python-dotenv` |
 
----
+## Prerequisiti
 
-## Prerequisites
+Prima di iniziare, assicurati di avere:
+- Python 3.10 o superiore installato.
+- Un account gratuito su [Groq Console](https://console.groq.com) per ottenere una API Key.
+- Un account gratuito su [Mailtrap](https://mailtrap.io) per le credenziali SMTP di test (sezione "Email Testing").
 
-Before you begin, ensure you have installed:
+## Installazione e Configurazione
 
-- Node.js >= 18
-- npm or pnpm
-- (Optional) OpenAI API key for advanced AI features
+1. **Clona il repository**
+   ```bash
+   git clone https://github.com/fabio-cerundolo/MailSense.git
+   cd MailSense
+   ```
 
----
+2. **Crea e attiva un ambiente virtuale** (consigliato)
+   ```bash
+   python -m venv .venv
+   # Su Linux/macOS:
+   source .venv/bin/activate
+   # Su Windows:
+   .venv\Scripts\activate
+   ```
 
-## Installation
+3. **Installa le dipendenze**
+   ```bash
+   pip install -r requirements.txt
+   ```
 
-```bash
-git clone https://github.com/fabio-cerundolo/MailSense.git
-cd MailSense
+4. **Configura le variabili d'ambiente**
+   Crea un file `.env` nella root del progetto copiando il template fornito:
+   ```bash
+   cp .env.example .env
+   ```
+   Apri il file `.env` e inserisci le tue credenziali reali:
+   ```env
+   # Groq AI Configuration
+   GROQ_API_KEY=gsk_your_groq_api_key_here
+   GROQ_MODEL=llama-3.3-70b-versatile
 
-npm install
-```
+   # Mailtrap SMTP Configuration
+   EMAIL_ADDRESS=your_mailtrap_username
+   EMAIL_PASSWORD=your_mailtrap_password
+   SMTP_SERVER=sandbox.smtp.mailtrap.io
+   SMTP_PORT=2525
+   SMTP_USE_TLS=True
+   SMTP_USE_SSL=False
+   ```
 
-## Configuration
+5. **Avvia l'applicazione**
+   ```bash
+   python app.py
+   ```
+   L'applicazione sarà disponibile all'indirizzo: [http://localhost:5000](http://localhost:5000)
 
-Create a `.env` file from the provided template:
+## Struttura del Progetto
 
-```bash
-cp .env.example .env
-```
-
-Fill in the environment variables with your values:
-
-```env
-VITE_API_URL=http://localhost:3000
-OPENAI_API_KEY=sk-...
-GMAIL_CLIENT_ID=...
-GMAIL_CLIENT_SECRET=...
-```
-
-## Usage
-
-Start the development server:
-
-```bash
-npm run dev        # Frontend
-npm run server     # Backend
-```
-
-The application will be available at [http://localhost:5173](http://localhost:5173).
-
----
-
-## Build
-
-```bash
-npm run build       # Production build
-npm run preview     # Preview production build
-```
-
-## Testing
-
-```bash
-npm test            # Unit tests
-npm run test:e2e    # End-to-end tests
-```
-
----
-
-## Project Structure
-
-```
+```text
 MailSense/
-├── src/
-│   ├── components/     # Reusable UI components
-│   ├── pages/          # Application pages
-│   ├── hooks/          # Custom hooks
-│   ├── services/       # API services and email integration
-│   ├── utils/          # Utility functions
-│   └── types/          # TypeScript definitions
-├── server/             # Node.js backend
-├── public/             # Static assets
-└── docs/               # Documentation
+├── app/
+│   ├── __init__.py
+│   ├── ai_email_service.py   # Logica di integrazione con Groq API
+│   ├── email_sender.py       # Logica di invio SMTP (Mailtrap)
+│   └── routes.py             # Definizione delle route Flask (Blueprints)
+├── templates/
+│   └── index.html            # Interfaccia utente frontend
+├── config.py                 # Caricamento centralizzato delle variabili d'ambiente
+├── .env.example              # Template sicuro per le variabili d'ambiente
+├── requirements.txt          # Dipendenze Python
+└── README.md
 ```
 
----
+## Funzionamento del Flusso
 
-## Roadmap
+1. L'utente compila i campi "Destinatario", "Oggetto" e "Contesto" nell'interfaccia web.
+2. Il frontend invia una richiesta `POST` al backend Flask (`/send-email`).
+3. Il backend chiama l'API di Groq per generare il corpo dell'email basato sul contesto fornito.
+4. Il testo generato viene restituito al frontend per un'anteprima immediata e chiara.
+5. Contemporaneamente, il backend tenta di inviare l'email tramite il server SMTP configurato (Mailtrap).
+6. L'utente riceve un feedback visivo di successo o di errore dettagliato, mantenendo sempre la visibilità del testo generato.
 
-- [x] MVP with basic categorization
-- [x] Gmail integration via OAuth 2.0
-- [x] Analytics dashboard
-- [ ] Multi-account support
-- [ ] Outlook plugin
-- [ ] Native mobile version (React Native)
-- [ ] Offline processing with local models
+## Sicurezza e Best Practices
 
----
+- Le chiavi API e le credenziali SMTP non sono mai committate nel repository, grazie all'uso di `python-dotenv` e al file `.gitignore`.
+- Le richieste all'API di Groq includono un timeout configurato per prevenire blocchi del thread del server.
+- La gestione degli errori è strutturata per restituire messaggi chiari al frontend senza esporre dettagli sensibili del backend o stack trace.
 
-## Contributing
+## Licenza
 
-Contributions are welcome. To contribute:
+Questo progetto è distribuito con licenza MIT. Vedere il file `LICENSE` per i dettagli.
 
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/feature-name`)
-3. Commit your changes (`git commit -m 'feat: description'`)
-4. Push to the branch (`git push origin feature/feature-name`)
-5. Open a Pull Request
-
-Please follow [Conventional Commits](https://www.conventionalcommits.org/) conventions for commit messages.
-
----
-
-## License
-
-Distributed under the MIT License. See [`LICENSE`](./LICENSE) for details.
-
----
-
-## Author
+## Autore
 
 **Fabio Cerundolo** — Full-Stack Developer
 
 - Portfolio: [fabio-cerundolo.dev](https://fabio-cerundolo.dev)
 - GitHub: [@fabio-cerundolo](https://github.com/fabio-cerundolo)
 - LinkedIn: [fabio-cerundolo](https://linkedin.com/in/fabio-cerundolo)
+```
