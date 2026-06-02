@@ -1,271 +1,290 @@
 <!DOCTYPE html>
-<html lang="it" class="scroll-smooth">
+<html lang="it">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>MailSense — L'IA al servizio della tua inbox</title>
-  <meta name="description" content="MailSense categorizza, riassume ed estrae insight dalle tue email usando l'intelligenza artificiale.">
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          fontFamily: {
-            sans: ['Inter', 'system-ui', 'sans-serif'],
-            display: ['Space Grotesk', 'system-ui', 'sans-serif'],
-          },
-          colors: {
-            bg: '#0a0a0f',
-            panel: '#12121a',
-            border: '#1f1f2e',
-            accent: '#7c5cff',
-            accent2: '#00e0b8',
-          }
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>MailSense — Automazione Email per PMI</title>
+    <meta name="description" content="MailSense: genera e invia email intelligenti per la tua PMI con un click.">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif'],
+                        display: ['Space Grotesk', 'system-ui', 'sans-serif'],
+                    },
+                    colors: {
+                        bg: '#0a0a0f',
+                        panel: '#12121a',
+                        border: '#1f1f2e',
+                        accent: '#7c5cff',
+                        accent2: '#00e0b8',
+                    }
+                }
+            }
         }
-      }
-    }
-  </script>
-  <style>
-    body { background-color: #0a0a0f; color: #e7e7ee; }
-    .aurora {
-      position: fixed; inset: 0; z-index: -1; overflow: hidden; pointer-events: none;
-    }
-    .aurora::before, .aurora::after {
-      content: ''; position: absolute; border-radius: 50%; filter: blur(80px); opacity: 0.4;
-    }
-    .aurora::before {
-      width: 600px; height: 600px; background: radial-gradient(circle, rgba(124,92,255,0.3), transparent 70%);
-      top: -10%; left: -10%; animation: float 15s ease-in-out infinite alternate;
-    }
-    .aurora::after {
-      width: 500px; height: 500px; background: radial-gradient(circle, rgba(0,224,184,0.2), transparent 70%);
-      bottom: -10%; right: -10%; animation: float 18s ease-in-out infinite alternate-reverse;
-    }
-    @keyframes float { 0% { transform: translate(0, 0); } 100% { transform: translate(30px, 40px); } }
-    
-    .glass {
-      background: rgba(18, 18, 26, 0.6);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-    }
-    .grad-text {
-      background: linear-gradient(135deg, #7c5cff 0%, #00e0b8 100%);
-      -webkit-background-clip: text; background-clip: text; color: transparent;
-    }
-    .reveal { opacity: 0; transform: translateY(30px); transition: all 0.8s cubic-bezier(0.2, 0.7, 0.2, 1); }
-    .reveal.show { opacity: 1; transform: translateY(0); }
-    
-    /* Mockup Dashboard CSS-only */
-    .mockup-window {
-      background: #12121a; border: 1px solid #1f1f2e; border-radius: 12px;
-      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5); overflow: hidden;
-    }
-    .mockup-header {
-      background: #0a0a0f; padding: 12px 16px; border-bottom: 1px solid #1f1f2e;
-      display: flex; gap: 8px; align-items: center;
-    }
-    .mockup-dot { width: 10px; height: 10px; border-radius: 50%; }
-    .mockup-body { padding: 20px; display: grid; grid-template-columns: 200px 1fr; gap: 20px; min-height: 300px; }
-    .mockup-sidebar { display: flex; flex-direction: column; gap: 12px; }
-    .mockup-item { height: 32px; background: rgba(255,255,255,0.03); border-radius: 6px; }
-    .mockup-item.active { background: rgba(124,92,255,0.15); border-left: 3px solid #7c5cff; }
-    .mockup-content { display: flex; flex-direction: column; gap: 16px; }
-    .mockup-email { background: rgba(255,255,255,0.02); border: 1px solid #1f1f2e; border-radius: 8px; padding: 16px; }
-    .mockup-line { height: 10px; background: rgba(255,255,255,0.05); border-radius: 4px; margin-bottom: 8px; }
-    .mockup-line.short { width: 60%; }
-    .mockup-line.accent { width: 40%; background: rgba(0,224,184,0.15); }
-  </style>
+    </script>
+    <style>
+        html, body { height: 100%; }
+        body {
+            background-color: #0a0a0f;
+            color: #e7e7ee;
+            font-family: 'Inter', system-ui, sans-serif;
+        }
+
+        /* Aurora background (senza flicker) */
+        .aurora {
+            position: fixed; inset: 0; z-index: -1; overflow: hidden; pointer-events: none;
+        }
+        .aurora::before, .aurora::after {
+            content: ''; position: absolute; border-radius: 50%; filter: blur(80px); opacity: 0.4;
+            transform: translateZ(0); backface-visibility: hidden;
+        }
+        .aurora::before {
+            width: 600px; height: 600px;
+            background: radial-gradient(circle, rgba(124,92,255,0.3), transparent 70%);
+            top: -10%; left: -10%;
+            animation: float 15s ease-in-out infinite alternate;
+        }
+        .aurora::after {
+            width: 500px; height: 500px;
+            background: radial-gradient(circle, rgba(0,224,184,0.2), transparent 70%);
+            bottom: -10%; right: -10%;
+            animation: float 18s ease-in-out infinite alternate-reverse;
+        }
+        @keyframes float {
+            0%   { transform: translate(0, 0); }
+            100% { transform: translate(30px, 40px); }
+        }
+
+        /* Glass card */
+        .glass {
+            background: rgba(18, 18, 26, 0.6);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .grad-text {
+            background: linear-gradient(135deg, #7c5cff 0%, #00e0b8 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        /* Input styling */
+        .field-input {
+            background: rgba(10, 10, 15, 0.6);
+            border: 1px solid #1f1f2e;
+            color: #e7e7ee;
+            transition: border-color 0.25s ease, box-shadow 0.25s ease, background 0.25s ease;
+        }
+        .field-input::placeholder { color: rgba(231, 231, 238, 0.35); }
+        .field-input:focus {
+            outline: none;
+            border-color: rgba(124, 92, 255, 0.6);
+            background: rgba(10, 10, 15, 0.9);
+            box-shadow: 0 0 0 3px rgba(124, 92, 255, 0.15);
+        }
+
+        /* Submit button */
+        .btn-submit {
+            background: linear-gradient(135deg, #7c5cff, #5b8cff);
+            box-shadow: 0 10px 30px -10px rgba(124,92,255,0.6);
+            transition: transform 0.25s ease, box-shadow 0.25s ease, opacity 0.25s ease;
+        }
+        .btn-submit:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 18px 40px -10px rgba(124,92,255,0.8);
+        }
+        .btn-submit:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        /* Spinner */
+        .spinner {
+            width: 16px; height: 16px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* Reveal animation */
+        .reveal {
+            opacity: 0;
+            transform: translateY(20px);
+            animation: reveal 0.8s cubic-bezier(0.2, 0.7, 0.2, 1) forwards;
+        }
+        @keyframes reveal {
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .aurora::before, .aurora::after { animation: none; }
+            .reveal { animation: none; opacity: 1; transform: none; }
+        }
+    </style>
 </head>
 <body class="antialiased selection:bg-accent selection:text-white">
 
-  <div class="aurora"></div>
+    <div class="aurora"></div>
 
-  <!-- NAV -->
-  <nav class="fixed top-0 inset-x-0 z-50 glass border-b border-border">
-    <div class="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
-      <a href="#" class="flex items-center gap-2 font-display font-bold text-xl">
-        <span class="w-8 h-8 rounded-lg bg-gradient-to-br from-accent to-accent2 grid place-items-center text-bg">M</span>
-        <span>MailSense</span>
-      </a>
-      <div class="hidden md:flex items-center gap-8 text-sm text-white/70">
-        <a href="#features" class="hover:text-white transition">Funzionalità</a>
-        <a href="#tech" class="hover:text-white transition">Tecnologia</a>
-        <a href="https://github.com/fabio-cerundolo/MailSense" target="_blank" class="px-4 py-2 rounded-lg bg-white/5 border border-border hover:border-accent hover:text-white transition flex items-center gap-2">
-          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M12 .5C5.73.5.77 5.46.77 11.73c0 4.98 3.23 9.2 7.71 10.69.56.1.77-.24.77-.54v-2.1c-3.14.68-3.8-1.34-3.8-1.34-.51-1.3-1.25-1.65-1.25-1.65-1.02-.7.08-.68.08-.68 1.13.08 1.72 1.16 1.72 1.16 1 1.72 2.63 1.22 3.27.93.1-.73.39-1.22.71-1.5-2.5-.28-5.13-1.25-5.13-5.57 0-1.23.44-2.24 1.16-3.03-.12-.29-.5-1.44.11-3 0 0 .95-.3 3.1 1.16.9-.25 1.86-.38 2.82-.38s1.92.13 2.82.38c2.15-1.46 3.1-1.16 3.1-1.16.61 1.56.23 2.71.11 3 .72.79 1.16 1.8 1.16 3.03 0 4.33-2.64 5.28-5.15 5.56.4.35.76 1.03.76 2.08v3.08c0 .3.2.65.78.54 4.47-1.49 7.7-5.71 7.7-10.69C23.23 5.46 18.27.5 12 .5z"/></svg>
-          GitHub
-        </a>
-      </div>
-    </div>
-  </nav>
+    <main class="min-h-screen flex items-center justify-center px-4 py-12 sm:py-16">
+        <div class="w-full max-w-xl">
 
-  <!-- HERO -->
-  <section class="relative pt-32 pb-20 md:pt-40 md:pb-32 px-6">
-    <div class="max-w-6xl mx-auto text-center reveal">
-      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-accent/10 border border-accent/20 text-accent text-xs font-medium mb-6">
-        <span class="w-1.5 h-1.5 rounded-full bg-accent2 animate-pulse"></span>
-        Open Source & AI-Powered
-      </div>
-      <h1 class="text-5xl md:text-7xl font-display font-bold leading-tight mb-6">
-        Dai senso alla tua <br/>
-        <span class="grad-text">casella di posta.</span>
-      </h1>
-      <p class="text-lg md:text-xl text-white/60 max-w-2xl mx-auto mb-10 leading-relaxed">
-        MailSense utilizza l'elaborazione del linguaggio naturale (NLP) per categorizzare automaticamente le email, estrarre riassunti e trasformare il caos informativo in chiarezza.
-      </p>
-      <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
-        <a href="https://github.com/fabio-cerundolo/MailSense" target="_blank" class="px-8 py-4 rounded-xl bg-gradient-to-r from-accent to-blue-500 font-semibold text-white shadow-lg shadow-accent/25 hover:shadow-accent/40 hover:-translate-y-1 transition duration-300">
-          Vedi il codice su GitHub
-        </a>
-        <a href="#features" class="px-8 py-4 rounded-xl border border-border bg-white/5 font-semibold hover:bg-white/10 transition duration-300">
-          Scopri le funzionalità
-        </a>
-      </div>
-    </div>
-
-    <!-- CSS-Only Dashboard Mockup -->
-    <div class="max-w-5xl mx-auto mt-16 reveal" style="transition-delay: 200ms;">
-      <div class="mockup-window">
-        <div class="mockup-header">
-          <div class="mockup-dot bg-red-400/80"></div>
-          <div class="mockup-dot bg-yellow-400/80"></div>
-          <div class="mockup-dot bg-green-400/80"></div>
-          <span class="ml-4 text-xs text-white/40 font-mono">app.mailsense.dev/dashboard</span>
-        </div>
-        <div class="mockup-body">
-          <div class="mockup-sidebar">
-            <div class="mockup-item active"></div>
-            <div class="mockup-item"></div>
-            <div class="mockup-item"></div>
-            <div class="mockup-item mt-auto" style="height: 40px; background: rgba(0,224,184,0.1);"></div>
-          </div>
-          <div class="mockup-content">
-            <div class="flex justify-between items-center mb-2">
-              <div class="mockup-line short" style="width: 120px; height: 14px;"></div>
-              <div class="mockup-line" style="width: 80px;"></div>
-            </div>
-            <div class="mockup-email">
-              <div class="flex items-center gap-3 mb-3">
-                <div class="w-8 h-8 rounded-full bg-accent/20"></div>
-                <div class="flex-1">
-                  <div class="mockup-line" style="width: 40%; margin-bottom: 4px;"></div>
-                  <div class="mockup-line short" style="width: 25%;"></div>
+            <!-- Header -->
+            <header class="text-center mb-8 reveal">
+                <div class="inline-flex items-center gap-2 mb-5">
+                    <span class="w-10 h-10 rounded-xl bg-gradient-to-br from-accent to-accent2 grid place-items-center text-bg font-display font-bold text-lg">M</span>
+                    <span class="font-display font-bold text-xl">MailSense</span>
                 </div>
-                <span class="text-[10px] px-2 py-1 rounded bg-accent2/10 text-accent2 border border-accent2/20">AI Summary</span>
-              </div>
-              <div class="mockup-line"></div>
-              <div class="mockup-line"></div>
-              <div class="mockup-line accent"></div>
+                <h1 class="font-display text-3xl sm:text-4xl md:text-5xl font-bold leading-tight mb-3">
+                    Automazione Email <br class="hidden sm:block"/>
+                    <span class="grad-text">per la tua PMI</span>
+                </h1>
+                <p class="text-white/60 text-sm sm:text-base max-w-md mx-auto">
+                    Compila i campi: MailSense genererà e invierà un'email personalizzata basata sul contesto che hai fornito.
+                </p>
+            </header>
+
+            <!-- Form card -->
+            <div class="glass rounded-2xl p-6 sm:p-8 reveal" style="animation-delay: 150ms;">
+                <form id="emailForm" class="space-y-5">
+
+                    <!-- Destinatario -->
+                    <div>
+                        <label for="recipient" class="block text-sm font-medium text-white/80 mb-2">
+                            Destinatario
+                        </label>
+                        <div class="relative">
+                            <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-white/40 pointer-events-none">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                                </svg>
+                            </span>
+                            <input
+                                type="text"
+                                id="recipient"
+                                name="recipient"
+                                placeholder="mario.rossi@azienda.it"
+                                required
+                                class="field-input w-full pl-11 pr-4 py-3 rounded-lg text-sm"
+                            />
+                        </div>
+                    </div>
+
+                    <!-- Oggetto -->
+                    <div>
+                        <label for="subject" class="block text-sm font-medium text-white/80 mb-2">
+                            Oggetto
+                        </label>
+                        <div class="relative">
+                            <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-white/40 pointer-events-none">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/>
+                                </svg>
+                            </span>
+                            <input
+                                type="text"
+                                id="subject"
+                                name="subject"
+                                placeholder="Es. Proposta di collaborazione"
+                                required
+                                class="field-input w-full pl-11 pr-4 py-3 rounded-lg text-sm"
+                            />
+                        </div>
+                    </div>
+
+                    <!-- Contesto -->
+                    <div>
+                        <label for="context" class="block text-sm font-medium text-white/80 mb-2">
+                            Contesto dell'email
+                        </label>
+                        <div class="relative">
+                            <span class="absolute left-3.5 top-3.5 text-white/40 pointer-events-none">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7"/>
+                                </svg>
+                            </span>
+                            <textarea
+                                id="context"
+                                name="context"
+                                rows="5"
+                                placeholder="Descriivi il contenuto, il tono e le informazioni chiave da includere nell'email..."
+                                required
+                                class="field-input w-full pl-11 pr-4 py-3 rounded-lg text-sm resize-y min-h-[120px]"
+                            ></textarea>
+                        </div>
+                    </div>
+
+                    <!-- Submit -->
+                    <button
+                        type="submit"
+                        id="submitBtn"
+                        class="btn-submit w-full py-3.5 rounded-xl text-white font-semibold text-sm inline-flex items-center justify-center gap-2"
+                    >
+                        <span id="btnText" class="inline-flex items-center gap-2">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
+                            </svg>
+                            Invia Email
+                        </span>
+                        <span id="btnLoading" class="hidden inline-flex items-center gap-2">
+                            <span class="spinner"></span>
+                            Invio in corso...
+                        </span>
+                    </button>
+                </form>
             </div>
-            <div class="mockup-email opacity-60">
-              <div class="flex items-center gap-3 mb-3">
-                <div class="w-8 h-8 rounded-full bg-white/10"></div>
-                <div class="flex-1">
-                  <div class="mockup-line" style="width: 50%; margin-bottom: 4px;"></div>
-                  <div class="mockup-line short" style="width: 30%;"></div>
-                </div>
-              </div>
-              <div class="mockup-line"></div>
-              <div class="mockup-line short"></div>
-            </div>
-          </div>
+
+            <!-- Footer hint -->
+            <p class="text-center text-xs text-white/30 mt-6 reveal" style="animation-delay: 300ms;">
+                Le email vengono generate e inviate in modo sicuro tramite il backend MailSense.
+            </p>
         </div>
-      </div>
-    </div>
-  </section>
+    </main>
 
-  <!-- FEATURES -->
-  <section id="features" class="py-24 px-6 border-t border-border bg-panel/30">
-    <div class="max-w-6xl mx-auto">
-      <div class="text-center mb-16 reveal">
-        <h2 class="text-3xl md:text-4xl font-display font-bold mb-4">Progettato per la <span class="grad-text">produttività</span></h2>
-        <p class="text-white/60 max-w-xl mx-auto">Non solo un client di posta, ma un assistente intelligente che lavora per te.</p>
-      </div>
+    <script>
+        document.getElementById("emailForm").onsubmit = async function (event) {
+            event.preventDefault();
 
-      <div class="grid md:grid-cols-3 gap-6">
-        <!-- Feature 1 -->
-        <div class="glass rounded-2xl p-8 reveal hover:border-accent/50 transition duration-300">
-          <div class="w-12 h-12 rounded-xl bg-accent/10 grid place-items-center text-accent mb-6">
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"></path></svg>
-          </div>
-          <h3 class="text-xl font-semibold mb-3">Categorizzazione Intelligente</h3>
-          <p class="text-white/60 text-sm leading-relaxed">Classifica automaticamente le email per contesto, priorità e mittente, eliminando il rumore di fondo.</p>
-        </div>
+            const btn = document.getElementById("submitBtn");
+            const btnText = document.getElementById("btnText");
+            const btnLoading = document.getElementById("btnLoading");
 
-        <!-- Feature 2 -->
-        <div class="glass rounded-2xl p-8 reveal hover:border-accent2/50 transition duration-300" style="transition-delay: 100ms;">
-          <div class="w-12 h-12 rounded-xl bg-accent2/10 grid place-items-center text-accent2 mb-6">
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
-          </div>
-          <h3 class="text-xl font-semibold mb-3">Estrazione di Insight</h3>
-          <p class="text-white/60 text-sm leading-relaxed">Riassume i contenuti chiave e identifica automaticamente le action items da una lunga catena di messaggi.</p>
-        </div>
+            // Stato "loading" (solo visivo, la logica non cambia)
+            btn.disabled = true;
+            btnText.classList.add("hidden");
+            btnLoading.classList.remove("hidden");
 
-        <!-- Feature 3 -->
-        <div class="glass rounded-2xl p-8 reveal hover:border-pink-400/50 transition duration-300" style="transition-delay: 200ms;">
-          <div class="w-12 h-12 rounded-xl bg-pink-400/10 grid place-items-center text-pink-400 mb-6">
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
-          </div>
-          <h3 class="text-xl font-semibold mb-3">Dashboard Analitica</h3>
-          <p class="text-white/60 text-sm leading-relaxed">Visualizza trend, volumi di posta e tempi di risposta con grafici interattivi e chiari.</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- TECH STACK -->
-  <section id="tech" class="py-24 px-6">
-    <div class="max-w-4xl mx-auto text-center reveal">
-      <h2 class="text-3xl font-display font-bold mb-12">Costruito con tecnologie moderne</h2>
-      <div class="flex flex-wrap justify-center gap-4">
-        <span class="px-4 py-2 rounded-lg bg-white/5 border border-border text-sm font-mono text-white/80">React 18</span>
-        <span class="px-4 py-2 rounded-lg bg-white/5 border border-border text-sm font-mono text-white/80">TypeScript</span>
-        <span class="px-4 py-2 rounded-lg bg-white/5 border border-border text-sm font-mono text-white/80">TailwindCSS</span>
-        <span class="px-4 py-2 rounded-lg bg-white/5 border border-border text-sm font-mono text-white/80">Python / FastAPI</span>
-        <span class="px-4 py-2 rounded-lg bg-white/5 border border-border text-sm font-mono text-white/80">NLP / AI</span>
-        <span class="px-4 py-2 rounded-lg bg-white/5 border border-border text-sm font-mono text-white/80">PostgreSQL</span>
-      </div>
-    </div>
-  </section>
-
-  <!-- CTA -->
-  <section class="py-24 px-6 border-t border-border bg-panel/30">
-    <div class="max-w-3xl mx-auto text-center reveal">
-      <h2 class="text-3xl md:text-4xl font-display font-bold mb-6">Pronto a riprendere il controllo?</h2>
-      <p class="text-white/60 mb-8">MailSense è un progetto open source. Esplora il codice, contribuisci o adattalo alle tue esigenze.</p>
-      <a href="https://github.com/fabio-cerundolo/MailSense" target="_blank" class="inline-flex items-center gap-2 px-8 py-4 rounded-xl bg-white text-bg font-bold hover:bg-white/90 transition duration-300">
-        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor"><path d="M12 .5C5.73.5.77 5.46.77 11.73c0 4.98 3.23 9.2 7.71 10.69.56.1.77-.24.77-.54v-2.1c-3.14.68-3.8-1.34-3.8-1.34-.51-1.3-1.25-1.65-1.25-1.65-1.02-.7.08-.68.08-.68 1.13.08 1.72 1.16 1.72 1.16 1 1.72 2.63 1.22 3.27.93.1-.73.39-1.22.71-1.5-2.5-.28-5.13-1.25-5.13-5.57 0-1.23.44-2.24 1.16-3.03-.12-.29-.5-1.44.11-3 0 0 .95-.3 3.1 1.16.9-.25 1.86-.38 2.82-.38s1.92.13 2.82.38c2.15-1.46 3.1-1.16 3.1-1.16.61 1.56.23 2.71.11 3 .72.79 1.16 1.8 1.16 3.03 0 4.33-2.64 5.28-5.15 5.56.4.35.76 1.03.76 2.08v3.08c0 .3.2.65.78.54 4.47-1.49 7.7-5.71 7.7-10.69C23.23 5.46 18.27.5 12 .5z"/></svg>
-        Visita il Repository
-      </a>
-    </div>
-  </section>
-
-  <!-- FOOTER -->
-  <footer class="border-t border-border py-10 px-6">
-    <div class="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-white/40">
-      <div class="font-mono">© 2026 MailSense by Fabio Cerundolo.</div>
-      <div class="flex items-center gap-6">
-        <a href="https://github.com/fabio-cerundolo" target="_blank" class="hover:text-white transition">GitHub</a>
-        <a href="https://fabio-cerundolo.github.io" target="_blank" class="hover:text-white transition">Portfolio</a>
-      </div>
-    </div>
-  </footer>
-
-  <script>
-    // Reveal on scroll
-    const io = new IntersectionObserver((entries) => {
-      entries.forEach(e => {
-        if (e.isIntersecting) {
-          e.target.classList.add('show');
-          io.unobserve(e.target);
-        }
-      });
-    }, { threshold: 0.1 });
-    
-    document.querySelectorAll('.reveal').forEach(el => io.observe(el));
-  </script>
+            try {
+                const response = await fetch('/send-email', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({
+                        recipient: document.getElementById("recipient").value,
+                        subject: document.getElementById("subject").value,
+                        context: document.getElementById("context").value
+                    })
+                });
+                const result = await response.json();
+                alert(result.status);
+            } catch (error) {
+                alert("Errore di comunicazione con il server. Riprova più tardi.");
+            } finally {
+                // Ripristina stato pulsante
+                btn.disabled = false;
+                btnText.classList.remove("hidden");
+                btnLoading.classList.add("hidden");
+            }
+        };
+    </script>
 </body>
 </html>
