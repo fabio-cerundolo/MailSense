@@ -1,268 +1,155 @@
 # MailSense
 
-> AI-powered email generation and delivery platform — generate, send and monitor personalized email campaigns with a local LLM.
-
-![Python](https://img.shields.io/badge/Python-3.10+-3776AB?logo=python&logoColor=white)
-![Flask](https://img.shields.io/badge/Flask-3.x-000000?logo=flask&logoColor=white)
-![HuggingFace](https://img.shields.io/badge/HuggingFace-distilgpt2-FFD21E?logo=huggingface&logoColor=black)
-![License](https://img.shields.io/badge/License-MIT-green)
+**Make sense of your inbox.**  
+MailSense is an intelligent application for email analysis and management. Using natural language processing (NLP) techniques, it automatically categorizes messages, extracts insights, and provides analytical views of your email activity.
 
 ---
 
-## Indice
+## Overview
 
-1. [Panoramica](#1-panoramica)
-2. [Stack Tecnologico](#2-stack-tecnologico)
-3. [Architettura](#3-architettura)
-4. [Struttura del Repository](#4-struttura-del-repository)
-5. [Prerequisiti](#5-prerequisiti)
-6. [Installazione e Avvio](#6-installazione-e-avvio)
-7. [Configurazione Variabili d'Ambiente](#7-configurazione-variabili-dambiente)
-8. [API Reference](#8-api-reference)
-9. [Flusso di Generazione Email](#9-flusso-di-generazione-email)
-10. [Roadmap](#10-roadmap)
-11. [Sicurezza e Note per la Produzione](#11-sicurezza-e-note-per-la-produzione)
+MailSense addresses the challenge of information overload in professional inboxes by offering:
+
+- Automatic email classification by category and priority
+- Extraction of summaries and action items from messages
+- Analytics dashboard to monitor trends and volumes
+- Modern, fully responsive user interface
+- Modular architecture, easily extensible
 
 ---
 
-## 1. Panoramica
+## Tech Stack
 
-**MailSense** è una web application che combina un backend Flask con un modello linguistico locale (distilgpt2 via HuggingFace Transformers) per generare automaticamente contenuti email personalizzati a partire da un contesto testuale fornito dall'utente.
-
-Il sistema permette di:
-
-- **Generare contenuti email** tramite LLM locale (nessuna chiamata a API esterne a pagamento)
-- **Inviare email** via SMTP con supporto TLS
-- **Testare i flussi email** in locale tramite Mailtrap senza inviare messaggi reali
-- **Interfacciarsi** tramite una UI web minimale o direttamente via API REST
-
----
-
-## 2. Stack Tecnologico
-
-| Layer | Tecnologia | Note |
-|---|---|---|
-| Backend | Python + Flask | Blueprint per routing modulare |
-| AI / LLM | HuggingFace Transformers — distilgpt2 | Inference locale, no API key richiesta |
-| Email Testing | Mailtrap SMTP Sandbox | Nessuna email reale inviata in dev |
-| Frontend | HTML + Jinja2 | Template Flask |
-| Config | python-dotenv | Variabili d'ambiente da file `.env` |
-
-**Linguaggi nel repository:**
-
-- Python — ~90%
-- HTML — ~10%
+| Component | Technology |
+|-----------|------------|
+| Frontend | React 18, TypeScript, TailwindCSS |
+| State Management | Zustand, React Query |
+| Backend | Node.js, Express |
+| NLP / AI | OpenAI API, Transformers.js |
+| Database | PostgreSQL |
+| Email Protocol | IMAP/SMTP (node-imap), Gmail API (OAuth 2.0) |
+| Tooling | Vite, ESLint, Prettier, Vitest |
 
 ---
 
-## 3. Architettura
+## Prerequisites
 
-```
-┌─────────────────┐       ┌──────────────────────┐
-│   Browser       │──────▶│   Flask App          │
-│  (index.html)   │       │   app.py / routes.py │
-└─────────────────┘       └────────┬─────────────┘
-                                   │
-                  ┌────────────────┼────────────────┐
-                  │                │                │
-                  ▼                ▼                ▼
-     ┌────────────────┐  ┌─────────────────┐  ┌──────────────┐
-     │ ai_email_      │  │  email_sender   │  │  config.py   │
-     │ service.py     │  │  .py            │  │  (.env)      │
-     │                │  │                 │  └──────────────┘
-     │ distilgpt2     │  │  SMTP / TLS     │
-     │ HuggingFace    │  │  Mailtrap       │
-     └────────────────┘  └─────────────────┘
-```
+Before you begin, ensure you have installed:
 
-**Flusso dati:**
-
-```
-Utente → Frontend (form contesto + destinatario)
-       → POST /send-email
-       → generate_email_content(context)   [distilgpt2 locale]
-       → send_email(recipient, subject, content)  [SMTP Mailtrap]
-       ← Risposta JSON {"status": "Email inviata con successo"}
-```
+- Node.js >= 18
+- npm or pnpm
+- (Optional) OpenAI API key for advanced AI features
 
 ---
 
-## 4. Struttura del Repository
-
-```
-MailSense/
-│
-├── app/
-│   ├── __init__.py           # Factory function create_app()
-│   ├── ai_email_service.py   # Generazione contenuto via distilgpt2
-│   ├── email_sender.py       # Invio email via SMTP
-│   └── routes.py             # Blueprint Flask con gli endpoint
-│
-├── templates/
-│   └── index.html            # UI web principale
-│
-├── app.py                    # Entry point — avvia Flask
-├── config.py                 # Configurazione da variabili d'ambiente
-├── requirements.txt          # Dipendenze Python
-├── .env.example              # Template variabili d'ambiente
-├── .gitignore
-└── LICENSE
-```
-
----
-
-## 5. Prerequisiti
-
-- Python >= 3.10
-- pip
-- Git
-
-> Il modello distilgpt2 viene scaricato automaticamente da HuggingFace al primo avvio (~350MB). Nessuna API key richiesta per l'inference locale.
-
----
-
-## 6. Installazione e Avvio
+## Installation
 
 ```bash
-# 1. Clona il repository
 git clone https://github.com/fabio-cerundolo/MailSense.git
 cd MailSense
 
-# 2. Crea e attiva il virtual environment
-python -m venv .venv
-
-# Linux / macOS (bash)
-source .venv/bin/activate
-
-# Fish shell
-source .venv/bin/activate.fish
-
-# 3. Installa le dipendenze
-pip install -r requirements.txt
-
-# 4. Configura le variabili d'ambiente
-cp .env.example .env
-# Modifica .env con le tue credenziali SMTP
-
-# 5. Avvia l'applicazione
-python app.py
+npm install
 ```
 
-L'applicazione sarà disponibile su `http://localhost:5000`.
+## Configuration
 
-> **Nota:** Al primo avvio, HuggingFace scaricherà il modello distilgpt2 (~350MB). I successivi avvii saranno immediati grazie alla cache locale.
-
----
-
-## 7. Configurazione Variabili d'Ambiente
-
-Copia `.env.example` in `.env` e compila i valori:
-
-| Variabile | Default | Descrizione |
-|---|---|---|
-| `SMTP_SERVER` | `sandbox.smtp.mailtrap.io` | Host SMTP |
-| `SMTP_PORT` | `2525` | Porta SMTP |
-| `EMAIL_ADDRESS` | — | Username SMTP |
-| `EMAIL_PASSWORD` | — | Password SMTP |
-| `SMTP_USE_TLS` | `True` | Abilita STARTTLS |
-| `SMTP_USE_SSL` | `False` | Abilita SSL diretto |
-| `HUGGINGFACE_API_KEY` | — | Opzionale — solo per modelli privati HF |
-
-> Per usare un provider SMTP reale in produzione (Gmail, SendGrid, SES) è sufficiente aggiornare le variabili SMTP nel file `.env`.
-
----
-
-## 8. API Reference
-
-### `GET /`
-Restituisce la UI web principale (`index.html`).
-
----
-
-### `POST /send-email`
-
-Genera il contenuto dell'email tramite AI e la invia al destinatario.
-
-**Request body (JSON):**
-
-```json
-{
-  "recipient": "destinatario@esempio.com",
-  "subject": "Oggetto dell'email",
-  "context": "Scrivi un'email di follow-up per un cliente interessato al nostro prodotto SaaS."
-}
-```
-
-**Response:**
-
-```json
-{
-  "status": "Email inviata con successo"
-}
-```
-
-**Esempio con curl:**
+Create a `.env` file from the provided template:
 
 ```bash
-curl -X POST http://localhost:5000/send-email \
-  -H "Content-Type: application/json" \
-  -d '{
-    "recipient": "test@esempio.com",
-    "subject": "Follow-up",
-    "context": "Email di follow-up per cliente interessato al prodotto SaaS."
-  }'
+cp .env.example .env
+```
+
+Fill in the environment variables with your values:
+
+```env
+VITE_API_URL=http://localhost:3000
+OPENAI_API_KEY=sk-...
+GMAIL_CLIENT_ID=...
+GMAIL_CLIENT_SECRET=...
+```
+
+## Usage
+
+Start the development server:
+
+```bash
+npm run dev        # Frontend
+npm run server     # Backend
+```
+
+The application will be available at [http://localhost:5173](http://localhost:5173).
+
+---
+
+## Build
+
+```bash
+npm run build       # Production build
+npm run preview     # Preview production build
+```
+
+## Testing
+
+```bash
+npm test            # Unit tests
+npm run test:e2e    # End-to-end tests
 ```
 
 ---
 
-## 9. Flusso di Generazione Email
+## Project Structure
 
 ```
-1. L'utente invia il contesto via form o API
-        │
-        ▼
-2. Flask (routes.py) riceve la richiesta POST /send-email
-        │
-        ▼
-3. ai_email_service.py genera il contenuto
-   - Carica distilgpt2 via HuggingFace Transformers (cache locale)
-   - Costruisce il prompt: "Scrivi una email formale per: {context}"
-   - Genera il testo con temperature=0.7, max_new_tokens=1500
-        │
-        ▼
-4. email_sender.py invia l'email
-   - Connessione SMTP con STARTTLS
-   - Login con credenziali da .env
-   - Invio tramite Mailtrap (dev) o SMTP reale (prod)
-        │
-        ▼
-5. Risposta JSON al client
+MailSense/
+├── src/
+│   ├── components/     # Reusable UI components
+│   ├── pages/          # Application pages
+│   ├── hooks/          # Custom hooks
+│   ├── services/       # API services and email integration
+│   ├── utils/          # Utility functions
+│   └── types/          # TypeScript definitions
+├── server/             # Node.js backend
+├── public/             # Static assets
+└── docs/               # Documentation
 ```
 
 ---
 
-## 10. Roadmap
+## Roadmap
 
-- [ ] Aggiungere supporto per modelli HuggingFace alternativi (es. GPT-2 medium, Mistral)
-- [ ] Implementare A/B testing sui contenuti generati
-- [ ] Aggiungere dashboard per monitoraggio metriche (open rate, click rate)
-- [ ] Supporto multilingua nella generazione
-- [ ] Containerizzazione con Docker Compose
-- [ ] Autenticazione utenti con JWT
-
----
-
-## 11. Sicurezza e Note per la Produzione
-
-> Questo progetto è pensato come ambiente dimostrativo. Prima di un deployment in produzione:
-
-1. **Non committare mai `.env`** — è già in `.gitignore`
-2. **Usare un provider SMTP reale** — sostituire Mailtrap con Gmail, SendGrid o AWS SES
-3. **Disabilitare `debug=True`** in `app.py`
-4. **Aggiungere autenticazione** agli endpoint API
-5. **Configurare HTTPS** tramite reverse proxy (Nginx + Let's Encrypt)
-6. **Valutare modelli LLM più potenti** per produzione (es. via API OpenAI o modelli locali Mistral/LLaMA)
+- [x] MVP with basic categorization
+- [x] Gmail integration via OAuth 2.0
+- [x] Analytics dashboard
+- [ ] Multi-account support
+- [ ] Outlook plugin
+- [ ] Native mobile version (React Native)
+- [ ] Offline processing with local models
 
 ---
 
-*MailSense — AI-powered email generation · [fabio-cerundolo](https://github.com/fabio-cerundolo)*
+## Contributing
+
+Contributions are welcome. To contribute:
+
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/feature-name`)
+3. Commit your changes (`git commit -m 'feat: description'`)
+4. Push to the branch (`git push origin feature/feature-name`)
+5. Open a Pull Request
+
+Please follow [Conventional Commits](https://www.conventionalcommits.org/) conventions for commit messages.
+
+---
+
+## License
+
+Distributed under the MIT License. See [`LICENSE`](./LICENSE) for details.
+
+---
+
+## Author
+
+**Fabio Cerundolo** — Full-Stack Developer
+
+- Portfolio: [fabio-cerundolo.dev](https://fabio-cerundolo.dev)
+- GitHub: [@fabio-cerundolo](https://github.com/fabio-cerundolo)
+- LinkedIn: [fabio-cerundolo](https://linkedin.com/in/fabio-cerundolo)
