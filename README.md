@@ -118,4 +118,3 @@ Questo progetto è distribuito con licenza MIT. Vedere il file `LICENSE` per i d
 - Portfolio: [fabio-cerundolo.dev](https://fabio-cerundolo.dev)
 - GitHub: [@fabio-cerundolo](https://github.com/fabio-cerundolo)
 - LinkedIn: [fabio-cerundolo](https://linkedin.com/in/fabio-cerundolo)
-```
