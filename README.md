@@ -3,7 +3,7 @@
 </p>
 
 <br />
-# MailSense
+
 
 MailSense è un'applicazione web per l'automazione intelligente della generazione e dell'invio di email, progettata per semplificare le comunicazioni aziendali. Sfrutta l'elaborazione del linguaggio naturale (NLP) per trasformare brevi contesti in email professionali, pronte per essere inviate in modo sicuro tramite un ambiente di test SMTP.
 
