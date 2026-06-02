@@ -1,39 +1,21 @@
-from transformers import pipeline, AutoTokenizer, AutoModelForCausalLM
-from flask import current_app
-
-def initialize_generator():
-    # Inizializza tokenizer e model
-    tokenizer = AutoTokenizer.from_pretrained("distilgpt2")
-    model = AutoModelForCausalLM.from_pretrained("distilgpt2")
-
-    # Configura correttamente i token
-    if tokenizer.pad_token is None:
-        tokenizer.pad_token = tokenizer.eos_token
-        model.config.pad_token_id = model.config.eos_token_id
-
-    # Crea il pipeline usando solo max_new_tokens
-    return pipeline(
-        "text-generation",
-        model=model,
-        tokenizer=tokenizer,
-        pad_token_id=tokenizer.pad_token_id
-    )
-
-# Inizializza il generatore una volta sola
-generator = initialize_generator()
+import requests
 
 def generate_email_content(context):
     try:
-        prompt = f"Scrivi una email formale per il seguente contesto: {context}"
-        result = generator(
-            prompt,
-            max_new_tokens=1500,  # Usiamo solo max_new_tokens
-            num_return_sequences=1,
-            do_sample=True,
-            temperature=0.7,
-            no_repeat_ngram_size=2
+        response = requests.post(
+            'http://localhost:11434/api/generate',
+            json={
+                "model": "mistral",
+                "prompt": f"Scrivi una email formale e professionale per il seguente contesto: {context}. Scrivi solo il corpo dell'email, senza aggiungere spiegazioni.",
+                "stream": False
+            },
+            timeout=60
         )
-        return result[0]['generated_text']
+        response.raise_for_status()
+        return response.json().get('response', '').strip()
+    except requests.exceptions.ConnectionError:
+        print("Errore: Ollama non è in esecuzione. Avvia con: ollama serve")
+        return None
     except Exception as e:
         print(f"Errore durante la generazione: {e}")
         return None

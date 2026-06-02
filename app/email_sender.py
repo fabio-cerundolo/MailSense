@@ -10,7 +10,7 @@ def send_email(recipient, subject, content):
     
     msg = MIMEText(content)
     msg['Subject'] = subject
-    msg['From'] = sender_email
+    msg['From'] = "test@mailsense.dev"
     msg['To'] = recipient
     
     with smtplib.SMTP(smtp_server, smtp_port) as server:
