@@ -171,3 +171,13 @@ cython_debug/
 .pypirc
 .env
 .env
+.env
+__pycache__/
+*.pyc
+get-pip.py
+.venv/
+.env
+.venv/
+__pycache__/
+*.pyc
+get-pip.py
